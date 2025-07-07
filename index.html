@@ -1,17 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>T-Shirts</title>
-  
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-</head>
-<body>
-  <div id="root"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>T-Shirts</title>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    ></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src="t-shirts.js"></script>
-    <script type="text/babel" src="shirts.js"></script>
-</body>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+
+      function App() {
+        return (
+          <div>
+            <h1>T-Shirts</h1>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '16px'
+            }}>
+              {tshirts.map(tshirt => <Tshirt tshirt={tshirt} />)}
+            </div>
+          </div>
+      );
+      }
+
+      function Tshirt({ tshirt }) {
+        const [stock, setStock] = React.useState(tshirt.stock);
+        const [quantity, setQuantity] = React.useState(tshirt.quantity);
+
+        function handleBuy() {
+          setStock(stock - quantity);
+          setQuantity(1);
+        }
+
+        return (
+          <div>
+            < img style={{ width: '100%' }} src={`images/${tshirt.image}`} />
+            <h3>{tshirt.title}</h3>
+            <p>$ {tshirt.price}</p >
+            <p>{stock > 0 ? `${stock} in stock` : 'Out of Stock'}</p >
+            {stock > 0 && <select onChange={e => setQuantity(e.target.value)}  >
+              {Array.from({ length: stock }, (_, i) => i + 1).map((quantity) => <option key={quantity}>{quantity}</option>)}{quantity}</select>}
+            {stock > 0 && <button style={{ marginLeft: '8px', cursor: 'pointer' }} onClick={handleBuy}>Buy</button>}
+          </div>
+        );
+      }
+
+      root.render(<App />);
+    </script>
+  </body>
 </html>
